@@ -3,7 +3,7 @@
 Hello everyone, this is a simple demo to explain how it works RAG in a simple application webapp.
 
 ## Overview
-Travelite is a travel assistant chatbot that leverages Retrieval-Augmented Generation (RAG) and IBM watsonx.ai to provide personalized travel recommendations and chat experiences. It features a web frontend and a WhatsApp/Twilio integration for conversational access.
+ Travel assistant chatbot that leverages Retrieval-Augmented Generation (RAG) and IBM watsonx.ai to provide personalized travel recommendations and chat experiences. It features a web frontend and a WhatsApp/Twilio integration for conversational access.
 
 ---
 
