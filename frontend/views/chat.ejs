@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travelite Assistant</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="chat-container">
+    <!-- ── header ── -->
+    <header class="chat-header">
+      <div class="logo-container">
+        <img src="/img/logo.png" alt="Travelite Logo" class="logo" />
+        <h1>Travelite Assistant</h1>
+      </div>
+      <button id="theme-toggle" aria-label="Toggle light/dark mode">🌙</button>
+    </header>
+
+    <!-- ── model picker ── -->
+    <div class="model-picker" style="padding:0.4rem 1rem;">
+      <label>
+        Model
+        <select id="model-select">
+          <option value="ibm/granite-3-8b-instruct">Granite 3B (Text)</option>
+          <option value="meta-llama/llama-3-2-11b-vision-instruct">LLAMA 3 11B (Vision)</option>
+        </select>
+      </label>
+    </div>
+
+    <main class="chat-messages" id="chat-box"></main>
+    <div id="typing-indicator" class="typing-indicator"></div>
+
+    <!-- ── input row ── -->
+    <form id="chat-form" class="chat-input" enctype="multipart/form-data">
+      <input type="text" id="user-input" placeholder="Ask me anything…" autocomplete="off" />
+      <input type="file" id="image-upload" accept="image/*" hidden />
+      <button type="button" id="upload-btn" aria-label="Upload image">📷</button>
+      <button type="submit" class="send-btn">Send</button>
+      <button type="button" class="mic-btn" id="mic-btn" aria-label="Speak">🎤</button>
+    </form>
+  </div>
+
+  <script>
+    const chatBox   = document.getElementById('chat-box');
+    const form      = document.getElementById('chat-form');
+    const input     = document.getElementById('user-input');
+    const toggle    = document.getElementById('theme-toggle');
+    const micBtn    = document.getElementById('mic-btn');
+    const typingInd = document.getElementById('typing-indicator');
+    const modelSel  = document.getElementById('model-select');
+    const imgInput  = document.getElementById('image-upload');
+    const uploadBtn = document.getElementById('upload-btn');
+
+    /* ── helpers ── */
+    function appendMessage(sender, text) {
+      const wrap = document.createElement('div');
+      wrap.className = `message ${sender.toLowerCase()}`; // "you" or "travelite"
+      wrap.innerHTML = `
+        <div class="avatar"></div>
+        <div class="bubble">${text}</div>
+      `;
+      chatBox.appendChild(wrap);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    /* ── theme toggle ── */
+    toggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const dark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', dark ? 'light' : 'dark');
+      toggle.textContent = dark ? '🌙' : '☀️';
+    });
+
+    /* ── speech‑to‑text ── */
+    if ('webkitSpeechRecognition' in window) {
+      const recog = new webkitSpeechRecognition();
+      recog.lang = 'en-US';
+      micBtn.onclick = () => recog.start();
+      recog.onresult = e => { input.value = e.results[0][0].transcript; };
+    } else { micBtn.style.display = 'none'; }
+
+    /* ── choose image ── */
+    uploadBtn.onclick = () => imgInput.click();
+
+    /* ── submit ── */
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const text = input.value.trim();
+      const img  = imgInput.files[0];
+      if (!text && !img) return;
+
+      if (text) appendMessage('You', text);
+      if (img)  appendMessage('You', '📷 Image uploaded');
+      input.value = ''; imgInput.value = '';
+      typingInd.textContent = 'Travelite is typing…';
+
+      const fd = new FormData();
+      if (text) fd.append('message', text);
+      if (img)  fd.append('image', img);
+      fd.append('model_id', modelSel.value);
+
+      try {
+        const res = await fetch('/chat', { method:'POST', body:fd });
+        const data = await res.json();
+        typingInd.textContent = '';
+        appendMessage('Travelite', data.reply || 'Sorry, no reply.');
+      } catch {
+        typingInd.textContent = '';
+        appendMessage('Travelite', '⚠️ Error contacting server.');
+      }
+    });
+  </script>
+</body>
+</html>

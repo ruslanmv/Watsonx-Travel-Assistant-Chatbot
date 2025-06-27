@@ -1,0 +1,6 @@
+# Environments
+.env
+apikey.json
+frontend/node_modules
+conversations/node_modules
+/.venv

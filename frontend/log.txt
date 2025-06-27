@@ -1,0 +1,2 @@
+✅ Server file is loaded.
+Travelite Chat UI running at http://localhost:3000

@@ -1,0 +1,5 @@
+In a leap year, there are 366 days. This extra day is added to February, making it a 29-day month in leap years. A leap year occurs every 4 years to help synchronize the calendar year with the solar year (the time it takes Earth to complete its orbit around the Sun).
+
+To determine if a particular year is a leap year, you can follow these simple rules:
+
+1. If the year is evenly
