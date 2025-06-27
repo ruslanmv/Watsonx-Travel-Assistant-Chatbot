@@ -71,22 +71,43 @@ Create a `.env` file in both `frontend/` and `conversations/` with your IBM wats
    python test_sdk/request.py
    ```
 
-## Automatic script
+
+##  Automatic Scripts
+
+###  Install the Environment
+
+```bash
+bash install.sh
+```
+
+###  Start the App
 
 ```bash
 bash start.sh
 ```
-
 ![](assets/2025-06-26-23-27-06.png)
 
-```bash
-bash start.sh  monitor
-```
 
-![](assets/2025-06-26-23-27-55.png)
+
 ---
 
+##  Monitor the Logs
+
 ```bash
-bash start.sh  stop
+bash start.sh monitor
 ```
-![](assets/2025-06-26-23-29-21.png)
+![](assets/2025-06-26-23-27-55.png)
+
+
+---
+
+##  Stop the App
+
+```bash
+bash start.sh stop
+```
+bash start.sh  stop
+**What it does:**
+
+* Stops both backend and frontend using the `.pid` files.
+* Cleans up by deleting `.pid` and `.log` files.
